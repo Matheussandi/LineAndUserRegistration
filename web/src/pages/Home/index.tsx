@@ -26,6 +26,12 @@ export function Home() {
                     style={{ fontFamily: 'Poppins', fontSize: '1.5rem' }}
                     onClick={() => navigate('/Lines')}
                 />
+
+                <Button
+                    title="Total de linhas"
+                    style={{ fontFamily: 'Poppins', fontSize: '1.5rem' }}
+                    onClick={() => navigate('/TotalLines')}
+                />
             </Container>
         </>
     )

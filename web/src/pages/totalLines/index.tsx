@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Header } from '../../components/Header';
 import { api } from '../../services/api';
-import { ButtonIcon, Table } from "./styles";
+import { ButtonIcon, Table, Container, Content, LabelStyle,  } from "./styles";
 
-interface ILine {
+interface ITotal {
     id: string;
     line_number: string;
     chip_number: string;
@@ -11,53 +12,57 @@ interface ILine {
     telephone_operator: string;
 }
 
-/* const [totLines, setTotLines] = useState<ILine[]>([]);
-
-let dataLines: ILine[] = []
-
-async function loadtotLines() {
-    const dataLines = await api.get('/telephoneline');
-    setTotLines(dataLines);
-}
-
-useEffect(() => {
-    loadtotLines();
-}, []) */
-
-
 export function TotalLines() {
+    const [totalLineVivo, setTotalLineVivo] = useState(0);
+    const [totalLineClaro, setTotalLineClaro] = useState(0);
+    const [totalLineOi, setTotalLineOi] = useState(0);
+    const [totalLineTim, setTotalLineTim] = useState(0);
+
+    const [totalLineNumberVivo, setTotalLineNumberVivo] = useState(0);
+    const [totalLineNumberClaro, setTotalLineNumberClaro] = useState(0);
+    const [totalLineNumberOi, setTotalLineNumberOi] = useState(0);
+    const [totalLineNumberTim, setTotalLineNumberTim] = useState(0);
+
+    let telephone: ITotal[] = [];
+
+    async function loadTelephone() {
+        const dataTelephone = await api.get('/telephoneLine').then(dados => dados.data);
+        if (dataTelephone) {
+            telephone = dataTelephone;
+            setTotalLineVivo(telephone.filter(tel => tel.telephone_operator.toLowerCase() === 'vivo').length)
+            setTotalLineClaro(telephone.filter(tel => tel.telephone_operator.toLowerCase() === 'claro').length)
+            setTotalLineOi(telephone.filter(tel => tel.telephone_operator.toLowerCase() === 'oi' ).length)
+            setTotalLineTim(telephone.filter(tel => tel.telephone_operator.toLowerCase() === 'tim').length )
+
+            setTotalLineNumberVivo(telephone.filter(tel => tel.chip_number.slice(0,2) === '24').length)
+            setTotalLineNumberClaro(telephone.filter(tel => tel.chip_number.slice(0,2) === '21').length)
+            setTotalLineNumberOi(telephone.filter(tel => tel.chip_number.slice(0,2) === '31').length)
+            setTotalLineNumberTim(telephone.filter(tel => tel.chip_number.slice(0,2) === '41').length)
+        }
+    }
+
+    useEffect(() => {
+        loadTelephone();
+    }, []);
+
     return (
         <>
-            <Table>
-                <thead>
-                    <tr >
-                        <th>Operadora</th>
-                        <th >Total de linhas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr >
-                        <td>Vivo</td>
-                        <td>0</td>
-                    </tr>
-                    <tr >
-                        <td>Claro</td>
-                        <td>0</td>
-                    </tr>
-                    <tr >
-                        <td>Tim</td>
-                        <td>0</td>
-                    </tr>
-                    <tr >
-                        <td>20Gb</td>
-                        <td>0</td>
-                    </tr>
-                    <tr >
-                        <td>30Gb</td>
-                        <td>0</td>
-                    </tr>
-                </tbody>
-            </Table>
+        <Container>
+            <Header title="Total" />
+
+            <Content>
+                <LabelStyle>Linhas da Vivo: {totalLineVivo}</LabelStyle>
+                <LabelStyle>Linhas da Claro: {totalLineClaro}</LabelStyle>
+                <LabelStyle>Linhas da Oi: {totalLineOi}</LabelStyle>
+                <LabelStyle>Linhas Tim: {totalLineTim}</LabelStyle>
+                <br />
+                <LabelStyle>DDD 24: {totalLineNumberVivo}</LabelStyle>
+                <LabelStyle>DDD 21: {totalLineNumberClaro}</LabelStyle>
+                <LabelStyle>DDD 31: {totalLineNumberOi}</LabelStyle>
+                <LabelStyle>DDD 41: {totalLineNumberTim}</LabelStyle>
+            </Content>
+
+            </Container>
         </>
     )
 }

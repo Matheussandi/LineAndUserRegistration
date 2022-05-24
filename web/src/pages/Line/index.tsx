@@ -14,19 +14,19 @@ import { useNavigate } from 'react-router-dom';
 
 interface ILine {
     id: string;
-    lineNumber: number;
-    chipNumber: number;
-    dataPlan: string;
-    accountNumber: number;
-    telephoneOperator: string;
+    line_number: string;
+    chip_number: string;
+    data_plan: string;
+    account_number: string;
+    telephone_operator: string;
 }
 
 export function Line() {
-    const [lineNumber, setLineNumber] = useState(0);
-    const [chipNumber, setChipNumber] = useState(0);
-    const [dataPlan, setDataPlan] = useState('');
-    const [accountNumber, setAccountNumber] = useState(0);
-    const [telephoneOperator, setTelephoneOperator] = useState('');
+    const [line_number, setLine_number] = useState('');
+    const [chip_number, setChip_number] = useState('');
+    const [data_plan, setData_plan] = useState('');
+    const [account_number, setAccount_number] = useState('');
+    const [telephone_operator, setTelephone_operator] = useState('');
 
     const [lines, setLines] = useState<ILine[]>([]);
 
@@ -57,49 +57,52 @@ export function Line() {
 
     async function handleaddLine(e: FormEvent) {
         e.preventDefault();
-        const user = {
-            lineNumber,
-            chipNumber,
-            dataPlan,
-            accountNumber,
-            telephoneOperator
+        const line = {
+            line_number,
+            chip_number,
+            data_plan,
+            account_number,
+            telephone_operator
         };
 
+        console.log(line)
         if (status === 'addLine') {
-            const { id } = await api.post('/users', user).then(dados => dados.data)
-            setLines([...lines, { id, lineNumber, chipNumber, dataPlan, accountNumber, telephoneOperator }]);
+            const { id } = await api.post('/telephoneline', line).then(dados => dados.data)
+            setLines([...lines, { id, line_number, chip_number, data_plan, account_number, telephone_operator }]);
         } else {
-            await api.put(`/users/${status}`, user);
+            await api.put(`/telephoneline/${status}`, line);
         }
-        setLineNumber(0);
-        setChipNumber(0);
-        setDataPlan('');
-        setAccountNumber(0);
-        setTelephoneOperator('');
-        setStatus('addUsuario');
+        setLine_number('');
+        setChip_number('');
+        setData_plan('');
+        setAccount_number('');
+        setTelephone_operator('');
+        setStatus('addLine');
         setIsOpen(false);
     }
 
 
     async function handleDeleteLine(id: string) {
         setLines(lines.filter(cli => cli.id !== id));
-        await api.delete(`/lines/${id}`);
+        await api.delete(`/telephoneline/${id}`);
     }
 
     async function handleUpdateLine(id: string) {
-        const dados = await api.get(`/lines/${id}`).then
+        const dados = await api.get(`/telephoneline/${id}`).then
             (dados => dados.data);
 
-        setLineNumber(dados.lineNumber);
-        setChipNumber(dados.chipNumber);
-        setDataPlan(dados.dataPlan);
-        setAccountNumber(dados.accountNumber);
-        setTelephoneOperator(dados.telephoneOperator);
+        setLine_number(dados.line_number);
+        setChip_number(dados.chip_number);
+        setData_plan(dados.data_plan);
+        setAccount_number(dados.account_number);
+        setTelephone_operator(dados.telephone_operator);
         setStatus(id);
+
+        openModal();
     }
 
     async function loadLines() {
-        const dataLine = await api.get('/lines').then(dados => dados.data);
+        const dataLine = await api.get('/telephoneline').then(dados => dados.data);
         setLines(dataLine);
     }
 
@@ -145,33 +148,33 @@ export function Line() {
 
                         <Input
                             placeholder='Número da linha'
-                            value={lineNumber}
-                            onChange={e => setLineNumber(Number(e.target.value))}
+                            value={line_number}
+                            onChange={e => setLine_number(e.target.value)}
 
                         />
 
                         <Input
                             placeholder='Número do chip'
-                            value={chipNumber}
-                            onChange={e => setChipNumber(Number(e.target.value))}
+                            value={chip_number}
+                            onChange={e => setChip_number(e.target.value)}
                         />
 
                         <Input
                             placeholder='Plano de dados'
-                            value={dataPlan}
-                            onChange={e => setDataPlan(e.target.value)}
+                            value={data_plan}
+                            onChange={e => setData_plan(e.target.value)}
                         />
 
                         <Input
                             placeholder='Número da conta'
-                            value={accountNumber}
-                            onChange={e => setAccountNumber(Number(e.target.value))}
+                            value={account_number}
+                            onChange={e => setAccount_number(e.target.value)}
                         />
 
                         <Input
                             placeholder='Operadora'
-                            value={telephoneOperator}
-                            onChange={e => setTelephoneOperator(e.target.value)}
+                            value={telephone_operator}
+                            onChange={e => setTelephone_operator(e.target.value)}
                         />
 
                         <Button
@@ -196,11 +199,11 @@ export function Line() {
                     <tbody>
                         {lines.map((li) => (
                             <tr key={li.id}>
-                                <td>{li.lineNumber}</td>
-                                <td>{li.chipNumber}</td>
-                                <td>{li.dataPlan}</td>
-                                <td>{li.accountNumber}</td>
-                                <td>{li.telephoneOperator}</td>
+                                <td>{li.line_number}</td>
+                                <td>{li.chip_number}</td>
+                                <td>{li.data_plan}</td>
+                                <td>{li.account_number}</td>
+                                <td>{li.telephone_operator}</td>
                                 <td>
                                     <ButtonIcon
                                         type='button'
